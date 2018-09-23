@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="<%- settings.description %>">
+    <meta name="author" content="<%- settings.author %>">
+
+    <!-- Styling and basic things -->
+    <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.19.1/moment.min.js" integrity="sha256-zG8v+NWiZxmjNi+CvUYnZwKtHzFtdO8cAKUIdB8+U9I=" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    
+    <!-- Markdown Editor --> 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css">
+    <script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
+    
+    <!-- App scripts (temp) -->
+    <script src="/public/app.js"></script>
+
+    <!-- App styles -->
+    <link rel="stylesheet" href="/public/styles.css?v=1.0">
+
+		<title><%- settings.title %></title>
+	</head>
+  <body>
+  <a name="top"></a>
+  <div class="wrapper">
+    <div class="box header">
+      <div class="branding">
+        <div class="logo"></div>
+        <div class="title"><a href="/"><%- settings.title %></a></div>
+      </div>
+      <div class="navigation">
+        <ul>
+          <% if(auth.logged) { %>
+            <li><a href="/logout">Logout</a></li>
+            <% if(auth.admin){%><li><a href="/admin">Admin</a></li><%}%>
+          <% } else { %>
+            <li><a href="/register">Register</a></li>
+            <li><a href="/login">Login</a></li>
+          <% } %>
+          <li><a href="#" class="logged"><%= auth.name %></a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="box sidebar">
+      <% if(path.includes("admin") && auth.admin) { %>
+        <%- include('blocks/admin-sidebar.html', {path, auth}) %>
+      <% } %>
+      <%- include('blocks/user-sidebar.html', {path, auth}) %>
+    </div>
+    <div class="box content">
+    <%- body %>
+    </div>
+    <div class="box footer">&copy;2018 <%- settings.author %>. All Rights Reserved. Steal from this and you will owe me your firstborn.</div>
+  </div>
+  </body>
+</html>

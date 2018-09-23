@@ -1,0 +1,15 @@
+<h2>Administration</h2>
+<div><a href="/admin/add">Add Article</a></div>
+<% articles.forEach(el => {%>
+  <article>
+    <header><a href="/view/<%= el.id %>"><%= el.title %></a></header>
+    <a href="/admin/edit/<%= el.id %>">Edit</a> - <a href="/admin/delete/<%= el.id %>">Delete</a> - 
+    <% if(el.published) { %>
+     <a href="/admin/unpublish/<%= el.id %>">Unpublish</a>
+    <% } else { %>
+      <a href="/admin/publish/<%= el.id %>">Publish</a>
+    <% } %><br/>
+    <%= el.account.name %> - <span class="longdate"><%= el.date %></span>
+  </article>
+  <hr>
+<% }); %>

@@ -1,0 +1,236 @@
+body {
+  font-family: 'Montserrat', sans-serif;
+}
+
+a {
+  color: #425E72;
+  text-decoration: none;
+}
+
+textarea {
+  width: 100%;
+  min-height: 200px;
+}
+
+.navigation {
+  float: right;
+}
+
+.navigation ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+.navigation li {
+  float: left;
+}
+
+.navigation li a {
+  display: block;
+  padding: 8px;
+}
+
+.branding {
+  float: left;
+  height: 100%;
+  font-size: 2em;
+  color: #5D5C61;
+}
+
+.sidebar {
+    grid-area: sidebar;
+    background-color: #B0A295;
+}
+
+.content {
+    grid-area: content;
+}
+
+.header {
+    grid-area: header;
+    height: 40px;
+    border: 1px solid #e7e7e7;
+    background-color: #938E94;
+}
+
+.footer {
+    grid-area: footer;
+    background-color: #938E94;
+}
+
+.wrapper {
+    background-color: #fff;
+    margin: 0 auto;
+}
+
+.box {
+  border-radius: 3px;
+  padding: 10px;
+}
+
+.wrapper {
+  display: grid;
+  grid-gap: 1em;
+  grid-template-areas:
+  "header"
+  "content"
+  "sidebar"
+  "footer"
+}
+
+@media only screen and (min-width: 1000px)   {
+  .wrapper {
+    grid-gap: 10px;
+    grid-template-columns: auto auto 300px;
+    grid-template-areas:
+    "header  header  header"
+    "content content sidebar"
+    "footer  footer  footer";
+    max-width: 85%;
+  }
+}
+
+input[type=text], input[type=password] {
+  background-color: transparent; /* Remove background fill */
+  border-radius: 0; /* Remove corner curve */
+  border: 2px solid #425E72; /* 2px color border */
+  color: #425E72; /* White text */
+  height: 35px; /* Increase input height */
+  min-width: 450px;
+  padding: 0 10px;
+  margin-top: 0;
+  font-size: 1.1em;
+}
+
+::-webkit-input-placeholder { /* WebKit, Blink, Edge */
+  color:    #425E72;
+}
+:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+ color:    #425E72;
+ opacity:  1;
+}
+::-moz-placeholder { /* Mozilla Firefox 19+ */
+ color:    #425E72;
+ opacity:  1;
+}
+:-ms-input-placeholder { /* Internet Explorer 10-11 */
+ color:    #425E72;
+}
+::-ms-input-placeholder { /* Microsoft Edge */
+ color:    #425E72;
+}
+
+.pretty-button {
+  background-color: #425E72; /* Remove background fill */
+  border-radius: 0; /* Remove corner curve */
+  border: 2px solid #425E72; /* 2px color border */
+  color: #fff; /* White text */
+  height: 45px; /* Increase input height */
+  padding: 0 10px;
+  margin-top: 0;
+  font-weight: bold;
+  font-size: 1.5em;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.dynamic-width > label {
+  display: inline-block;
+  width: 150px;
+  margin-top: 15px;
+}
+
+fieldset {
+  margin: 20px 0;
+}
+
+input[type=checkbox] {
+	-webkit-appearance: none;
+	background-color: #fafafa;
+	border: 1px solid #cacece;
+	box-shadow: 0 1px 2px rgba(0,0,0,0.05), inset 0px -15px 10px -12px rgba(0,0,0,0.05);
+  padding: 9px;
+	border-radius: 3px;
+	display: inline-block;
+  position: relative;
+  top: 5px;
+}
+
+input[type=checkbox]:active, input[type=checkbox]:checked:active {
+	box-shadow: 0 1px 2px rgba(0,0,0,0.05), inset 0px 1px 3px rgba(0,0,0,0.1);
+}
+
+input[type=checkbox]:checked {
+	background-color: #e9ecee;
+	border: 1px solid #adb8c0;
+	box-shadow: 0 1px 2px rgba(0,0,0,0.05), inset 0px -15px 10px -12px rgba(0,0,0,0.05), inset 15px 10px -12px rgba(255,255,255,0.1);
+	color: #99a1a7;
+}
+
+input[type=checkbox]:checked:after {
+	content: '\2714';
+	font-size: 14px;
+	position: absolute;
+	top: 0px;
+	left: 3px;
+	color: #99a1a7;
+}
+
+#password-strength {
+  color: grey;
+  margin-top: 5px;
+  width: 325px;
+}
+
+#password-strength-meter {
+  background: grey;
+  height: 3px;
+  width: 50%;
+  margin: 0;
+}
+
+article.post {
+  box-shadow: rgb(221, 221, 221) 1px 2px 3px;
+  background: rgb(255, 255, 255);
+  border-width: 1px;
+  border-style: solid;
+  border-color: rgb(221, 221, 221);
+  border-image: initial;
+  border-radius: 3px;
+  padding: 5px;
+  margin-bottom: 30px;
+}
+
+article.post header {
+  margin: 10px;
+  margin-top: 5px;
+  font-size: 1.8em;
+}
+
+.post-info {
+  text-shadow: rgb(255, 255, 255) 0px 1px;
+  font-weight: 600;
+  padding: 5px;
+}
+
+main.post {
+  margin: 10px;
+}
+
+footer.post {
+  font-size: 0.85em;
+  line-height: 1.6em;
+  border-top: 1px solid #ddd;
+  padding-top: 1.6em;
+  margin: 0 10px 10px;
+  height: 25px;
+}
+
+.post-commentcount {
+  float: left;
+}
+
+.post-actions {
+  float: right;
+}
