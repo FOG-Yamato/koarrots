@@ -27,7 +27,7 @@ To install Koarrots, once the pre-requisites are properly installed, open a new 
 
 ```
 git clone https://github.com/eslachance/koarrots.git
-cd Koarrots
+cd koarrots
 npm install
 ```
 
