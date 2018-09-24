@@ -22,7 +22,7 @@ const config = require("./config.json");
 app.context.config = config;
 
 app.keys = [config.secret];
-app.use(session(app));
+app.use(session({ store: require("./enmap-session.js") }, app));
 
 app.use(mount("/public", serve("./static")));
 
