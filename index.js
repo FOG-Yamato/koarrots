@@ -28,10 +28,13 @@ render(app, {
   layout: 'template',
   viewExt: 'html',
   cache: false,
-  debug: true
+  debug: false
 });
 
 app.use(async (ctx, next) => {
+  // ignore f*cking favicon as the very first action. ugh.
+  if (ctx.path === '/favicon.ico') return;
+
   // Set "previous" URL to session (for after logging)
   const notsaved = ["/includes", "/register", "/adduser", "/favicon.ico"];
   if (!notsaved.some(path => ctx.url.includes(path))) {
@@ -97,7 +100,7 @@ app.use(async (ctx, next) => {
   ctx.set('X-Response-Time', `${ms}ms`);
 });
 
-app.use(mount(require("./routes/blog.js")));
+//app.use(mount(require("./routes/blog.js")));
 app.use(mount(require("./routes/account.js")));
 app.use(mount("/admin", require("./routes/admin.js")));
 

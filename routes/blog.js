@@ -6,13 +6,24 @@ const router = new Router();
 const app = new Koa();
 
 router.get("/", async (ctx, next) => {
-  ctx.body = "test";
-  console.log(ctx.state);
+  await ctx.render('posts', {
+    articles: ctx.db.getArticles(true)
+  });
   next();
 });
 
-router.get("/test", async (ctx, next) => {
-  ctx.body = "test";
+router.get("/view/:id", async (ctx, next) => {
+  await ctx.render('post', {
+    article: ctx.db.getArticle(ctx.params.id)
+  });
+  next();
+});
+
+router.get("/random", async (ctx, next) => {
+  const rand = ctx.db.articles.randomKey();
+  await ctx.render('post', {
+    article: ctx.db.getArticle(rand)
+  });
   next();
 })
 
