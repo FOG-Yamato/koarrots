@@ -1,29 +1,60 @@
-const Koa = require('koa');
-const Router = require('koa-router');
-const parser = require('koa-body');
+const Koa = require("koa");
+const Router = require("koa-router");
+const parser = require("koa-bodyparser");
 const router = new Router();
 
 const app = new Koa();
 
+router.get(["/user/:id", "/user"], async (ctx, next) => {
+  const user = ctx.db.users.get(ctx.params.id || ctx.session.username);
+  if (!user) return ctx.redirect("/login");
+  const comments = ctx.db.comments.filter(comment => comment.user === user.username);
+  const articles = ctx.db.articles.filter(article => article.user === user.username);
+  await ctx.render("user", {
+    user,
+    articles,
+    comments
+  });
+  next();
+});
+
+router.get("/me", async (ctx, next) => {
+  if (!ctx.session.logged) return ctx.redirect("/login");
+  const user = ctx.db.users.get(ctx.session.username);
+  const comments = ctx.db.comments.filter(comment => comment.user === user.username);
+  const articles = ctx.db.articles.filter(article => article.user === user.username);
+  await ctx.render("me", {
+    user,
+    articles,
+    comments
+  });
+  next();
+});
+
 router.get("/register", async (ctx, next) => {
-  await ctx.render('register');
+  await ctx.render("register");
+  next();
 });
 
 router.post("/register", async (ctx, next) => {
   ctx.db.newuser(ctx.request.body.username, ctx.request.body.name, ctx.request.body.password, ctx.request.body.admin === "on");
   ctx.redirect(ctx.session.back || "/");
+  next();
 });
 
 router.get("/login", async (ctx, next) => {
-  await ctx.render('login');
+  await ctx.render("login");
+  next();
 });
 
 router.post("/login", async (ctx, next) => {
   console.log(ctx.request.body);
-  //if (!ctx.request.body.username || !ctx.request.body.password) res.status(400).send("Missing Username or Password");
-  /*const success = await db.login(ctx.request.body.username, ctx.request.body.password);
+  if (!ctx.request.body.username || !ctx.request.body.password) {
+    // res.status(400).send("Missing Username or Password");
+  }
+  const success = await ctx.db.login(ctx.request.body.username, ctx.request.body.password);
   if (success) {
-    const user = db.users.get(ctx.request.body.username);
+    const user = ctx.db.users.get(ctx.request.body.username);
     ctx.session.logged = true;
     ctx.session.username = ctx.request.body.username;
     ctx.session.admin = user.admin;
@@ -31,37 +62,35 @@ router.post("/login", async (ctx, next) => {
     ctx.session.name = user.name;
     ctx.session.save();
     console.log(`User authenticated: ${user.username}`);
-    res.redirect(ctx.session.back || "/");
+    ctx.redirect(ctx.session.back || "/");
   } else {
     console.log("Authentication Failed");
-    //res.status(403).send("Nope. Not allowed, mate.");
-  }*/
-  ctx.body = "ok";
+    ctx.redirect("/");
+    // res.status(403).send("Nope. Not allowed, mate.");
+  }
   next();
 });
 
 router.get("/logout", async (ctx, next) => {
-  ctx.session.destroy((err) => {
-    if (err) console.log(`Error destroying session: ${err}`);
-    res.redirect("/");
-  });
+  ctx.session = null;
+  ctx.redirect("/");
+  next();
 });
 
 router.get("/install", async (ctx, next) => {
-  const db = ctx.state.db;
+  const { db } = ctx.state;
   if (db.settings.count > 0 || db.users.count > 0) {
     ctx.status = 403;
     ctx.message = "ALREADY INITIALIZED, GO AWAY PUNY HUMAN!";
     return next();
   }
-  await ctx.render('install');
+  await ctx.render("install");
   next();
 });
 
 router.post("/install", async (ctx, next) => {
   console.log("Getting Install Data");
-  console.dir(ctx.request.body);
-  const db = ctx.state.db;
+  const { db } = ctx.state;
   if (db.settings.count > 0 || db.users.count > 0) {
     console.log("403");
     ctx.status = 403;
@@ -108,12 +137,13 @@ router.post("/install", async (ctx, next) => {
     });
   }
   console.log("All done!");
-  return ctx.redirect("/");
-})
+  ctx.redirect("/");
+  next();
+});
 
 app
   .use(parser())
   .use(router.routes())
-  .use(router.allowedMethods())
+  .use(router.allowedMethods());
 
 module.exports = app;

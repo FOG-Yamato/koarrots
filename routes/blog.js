@@ -1,35 +1,35 @@
-const Koa = require('koa');
-const Router = require('koa-router');
-const parser = require('koa-body');
+const Koa = require("koa");
+const Router = require("koa-router");
+const parser = require("koa-bodyparser");
 const router = new Router();
 
 const app = new Koa();
 
 router.get("/", async (ctx, next) => {
-  await ctx.render('posts', {
+  await ctx.render("posts", {
     articles: ctx.db.getArticles(true)
   });
-  next();
+  return next();
 });
 
 router.get("/view/:id", async (ctx, next) => {
-  await ctx.render('post', {
+  await ctx.render("post", {
     article: ctx.db.getArticle(ctx.params.id)
   });
-  next();
+  return next();
 });
 
 router.get("/random", async (ctx, next) => {
   const rand = ctx.db.articles.randomKey();
-  await ctx.render('post', {
+  await ctx.render("post", {
     article: ctx.db.getArticle(rand)
   });
-  next();
-})
+  return next();
+});
 
 app
   .use(parser())
   .use(router.routes())
-  .use(router.allowedMethods())
+  .use(router.allowedMethods());
 
 module.exports = app;

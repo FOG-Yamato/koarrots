@@ -34,18 +34,20 @@ exports.newuser = (username, name, plainpw, admin = false) => {
   });
 };
 
-exports.getCleanUser = (username) => {
+exports.getUser = (username, clean = true) => {
   if (!this.users.has(username)) return null;
   const user = this.users.get(username);
-  delete user.password;
+  if (clean) delete user.password;
   return user;
 };
+
+exports.getUsers = (clean = false) => this.users.map(user => this.getUser(user.username, clean));
 
 exports.getArticle = (id) => {
   if (!this.articles.has(id)) return null;
   const article = this.articles.get(id);
   const comments = this.getComments(id);
-  article.account = this.getCleanUser(article.user);
+  article.account = this.getUser(article.user, true);
   article.rendered = marked(article.content);
   article.comments = comments;
   return article;
@@ -53,7 +55,7 @@ exports.getArticle = (id) => {
 
 exports.getArticles = (publishedOnly = false) => {
   const articles = publishedOnly ? this.articles.filter(a => a.published) : this.articles;
-  const parsed = articles.keyArray().map(this.getArticle).sort((p, c) => c.date - p.date, 0);
+  const parsed = articles.keyArray().map(this.getArticle).sort((prev, curr) => curr.date - prev.date, 0);
   return parsed;
 };
 
@@ -66,7 +68,7 @@ exports.addArticle = (title, content, user, published = false) => {
 exports.getComment = (id) => {
   if (!this.comments.has(id)) return null;
   const comment = this.comments.get(id);
-  comment.account = this.getCleanUser(comment.user);
+  comment.account = this.getUser(comment.user, true);
   comment.rendered = marked(comment.content);
   return comment;
 };
@@ -76,8 +78,6 @@ exports.getComments = (article) => {
   const parsed = comments.keyArray().map(this.getComment);
   return parsed;
 };
-
-exports.getUsers = () => this.users.map(user => this.getCleanUser(user.username));
 
 exports.formatDate = (timestamp) => {
   const date = new Date(timestamp),
@@ -114,7 +114,7 @@ function scorePassword(pass) {
   };
 
   let variationCount = 0;
-  for (let check in variations) {
+  for (const check in variations) {
     variationCount += variations[check] == true ? 1 : 0;
   }
   score += (variationCount - 1) * 10;
