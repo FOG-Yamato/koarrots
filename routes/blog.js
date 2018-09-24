@@ -1,8 +1,6 @@
 const Koa = require("koa");
 const Router = require("koa-router");
-const parser = require("koa-bodyparser");
 const router = new Router();
-
 const app = new Koa();
 
 router.get("/", async (ctx, next) => {
@@ -27,9 +25,9 @@ router.get("/random", async (ctx, next) => {
   return next();
 });
 
-app
-  .use(parser())
-  .use(router.routes())
-  .use(router.allowedMethods());
-
-module.exports = app;
+module.exports = {
+  app, router, conf: {
+    route: "/",
+    description: "Basic blog routes"
+  }
+};

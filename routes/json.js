@@ -1,7 +1,6 @@
 const Koa = require("koa");
 const Router = require("koa-router");
 const router = new Router();
-
 const app = new Koa();
 
 router.get("/articles", async (ctx, next) => {
@@ -29,8 +28,9 @@ router.get("/user/:id", async (ctx, next) => {
   next();
 });
 
-app
-  .use(router.routes())
-  .use(router.allowedMethods());
-
-module.exports = app;
+module.exports = {
+  app, router, conf: {
+    route: "/json",
+    description: "Read-Only JSON API Routes"
+  }
+};

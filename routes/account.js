@@ -1,8 +1,6 @@
 const Koa = require("koa");
 const Router = require("koa-router");
-const parser = require("koa-bodyparser");
 const router = new Router();
-
 const app = new Koa();
 
 router.get(["/user/:id", "/user"], async (ctx, next) => {
@@ -48,9 +46,8 @@ router.get("/login", async (ctx, next) => {
 });
 
 router.post("/login", async (ctx, next) => {
-  console.log(ctx.request.body);
   if (!ctx.request.body.username || !ctx.request.body.password) {
-    // res.status(400).send("Missing Username or Password");
+    ctx.throw(400, "Missing Username or Password");
   }
   const success = await ctx.db.login(ctx.request.body.username, ctx.request.body.password);
   if (success) {
@@ -65,44 +62,36 @@ router.post("/login", async (ctx, next) => {
     ctx.redirect(ctx.session.back || "/");
   } else {
     console.log("Authentication Failed");
-    ctx.redirect("/");
-    // res.status(403).send("Nope. Not allowed, mate.");
+    ctx.throw(403, "Nope. Not allowed, mate.");
   }
-  next();
 });
 
-router.get("/logout", async (ctx, next) => {
+router.get("/logout", async (ctx) => {
   ctx.session = null;
   ctx.redirect("/");
-  next();
 });
 
-router.get("/install", async (ctx, next) => {
+router.get("/install", async (ctx) => {
   const { db } = ctx.state;
   if (db.settings.count > 0 || db.users.count > 0) {
     ctx.status = 403;
     ctx.message = "ALREADY INITIALIZED, GO AWAY PUNY HUMAN!";
-    return next();
+    return;
   }
   await ctx.render("install");
-  next();
 });
 
-router.post("/install", async (ctx, next) => {
+router.post("/install", async (ctx) => {
   console.log("Getting Install Data");
   const { db } = ctx.state;
   if (db.settings.count > 0 || db.users.count > 0) {
-    console.log("403");
-    ctx.status = 403;
-    ctx.message = "ALREADY INITIALIZED, GO AWAY PUNY HUMAN!";
-    return next();
+    ctx.throw(403, "ALREADY INITIALIZED, GO AWAY PUNY HUMAN!");
+    return;
   }
   const checks = ["username", "password", "title", "description", "author"];
   if (checks.some(field => ctx.request.body[field].length < 3)) {
-    console.log("400");
-    ctx.status = 400;
-    ctx.message = "Field information missing to create the site.";
-    return next();
+    ctx.throw(400, "Field information missing to create the site.");
+    return;
   }
   console.log("Got passed the checks");
   checks.slice(2).forEach(field => {
@@ -138,12 +127,11 @@ router.post("/install", async (ctx, next) => {
   }
   console.log("All done!");
   ctx.redirect("/");
-  next();
 });
 
-app
-  .use(parser())
-  .use(router.routes())
-  .use(router.allowedMethods());
-
-module.exports = app;
+module.exports = {
+  app, router, conf: {
+    route: "/",
+    description: "Account Routes"
+  }
+};

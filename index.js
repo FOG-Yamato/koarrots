@@ -1,5 +1,6 @@
 // Native Imports
 const { join } = require("path");
+const { readdirSync, statSync } = require("fs");
 
 // Koa Imports
 const Koa = require("koa");
@@ -16,7 +17,11 @@ const router = new Router();
 // Enmap DB Wrapper
 app.context.db = require("./enmap-db.js");
 
-app.keys = ["some secret hurr"];
+// Load config file
+const config = require("./config.json");
+app.context.config = config;
+
+app.keys = [config.secret];
 app.use(session(app));
 
 app.use(mount("/public", serve("./static")));
@@ -29,19 +34,19 @@ render(app, {
   debug: false
 });
 
-app.use(require("./middleware/foyer.js"));
-app.use(require("./middleware/logging.js"));
-app.use(require("./middleware/errorhandling.js"));
-app.use(require("./middleware/settings.js"));
-app.use(require("./middleware/state.js"));
-app.use(require("./middleware/part1.js"));
-app.use(require("./middleware/part2.js"));
+const middleware = ["part1", "foyer", "logging", "errorhandling", "settings", "state", "part2"];
+for (const name of middleware) {
+  app.use(require(`./middleware/${name}.js`));
+}
 
-app.use(mount(require("./routes/blog.js")));
-app.use(mount(require("./routes/account.js")));
-app.use(mount("/api", require("./routes/api.js")));
-app.use(mount("/json", require("./routes/json.js")));
-app.use(mount("/admin", require("./routes/admin.js")));
+readdirSync("./routes")
+  .forEach(file => {
+    const data = require(`./routes/${file}`);
+    app.use(mount(data.conf.route, data.app
+      .use(parser())
+      .use(data.router.routes())
+      .use(data.router.allowedMethods())));
+  });
 
 app
   .use(parser())
@@ -52,4 +57,4 @@ app.on("error", (err, ctx) => {
   console.error("server error", err, ctx);
 });
 
-app.listen(3000);
+app.listen(config.port);

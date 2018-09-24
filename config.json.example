@@ -1,5 +1,4 @@
 {
-	"saltRounds": 10,
 	"secret": "enter a unique secret here",
 	"port": 8080
 }

@@ -1,8 +1,6 @@
 const Koa = require("koa");
 const Router = require("koa-router");
-const parser = require("koa-bodyparser");
 const router = new Router();
-
 const app = new Koa();
 
 app.use(async (ctx, next) => {
@@ -110,9 +108,9 @@ router.post("/settings", async (ctx, next) => {
   next();
 });
 
-app
-  .use(parser())
-  .use(router.routes())
-  .use(router.allowedMethods());
-
-module.exports = app;
+module.exports = {
+  app, router, conf: {
+    route: "/admin",
+    description: "Basic blog routes"
+  }
+};
